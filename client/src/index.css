@@ -1,0 +1,10 @@
+@import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
+
+* {
+    margin: 0px;
+}
+
+.leaflet-touch .leaflet-control-attribution, .leaflet-touch .leaflet-control-layers, .leaflet-touch .leaflet-bar {
+    display: none;
+}
