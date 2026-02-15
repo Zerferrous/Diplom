@@ -1,0 +1,52 @@
+services:
+
+  client:
+    build: 
+      context: ./client
+      dockerfile: Dockerfile
+      target: development
+    command: npm run dev
+    env_file:
+      - ./client/.env
+    depends_on:
+      - db
+      - server
+    ports:
+    - 5173:5173
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+      target: development
+    command: npm run dev
+    env_file:
+    - ./server/.env
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+    - ./server:/usr/src/app
+    - /usr/src/app/node_modules
+    ports:
+    - 8000:8000
+  
+  db:
+    container_name: mysql_db
+    image: mysql:8.3
+    restart: always
+    environment:
+      MYSQL_DATABASE: app_db
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+    - "3306:3306"
+    volumes:
+    - mysqldata:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  mysqldata:
